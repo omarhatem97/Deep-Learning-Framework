@@ -19,6 +19,7 @@ def precision (label, predicted_value):
 
     return None
 
+
 def recall (label, predicted_value):
     """takes label , predicted_value as vectors
         return recall """
