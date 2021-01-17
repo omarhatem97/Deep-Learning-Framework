@@ -49,8 +49,15 @@ def confusion_matrix (label, predicted_value, num_class):
                 continue
             fp += classes[j][i]
 
+    #compute fn
+    for i in range(len(classes)):
+        for j in range(len(classes)):
+            if(i == j):
+                continue
+            fn += classes[i][j]
 
-    return classes, tp, tn, fp
+
+    return classes, tp, tn, fp, fn
 
     
 
@@ -108,8 +115,9 @@ if __name__ == '__main__':
     label =           [0,1,2,1,0]
     predicted_value = [0,1,1,1,2]
 
-    out,tp,tn,fp = confusion_matrix(label, predicted_value, 3)
+    out,tp,tn,fp,fn = confusion_matrix(label, predicted_value, 3)
     print_2dlist(out)
     print(tp)
     print(tn)
     print(fp)
+    print(fn)
