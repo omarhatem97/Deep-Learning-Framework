@@ -1,7 +1,5 @@
 class loss:
-    """takes the correct label , predicted value calculated from the model , name of loss function
-        returns delta , loss
-      
+    """
         1-Forward function 
         error of X with respect to Y_labels.
         Args:
