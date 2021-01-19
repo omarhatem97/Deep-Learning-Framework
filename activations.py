@@ -38,9 +38,7 @@ def softmax_grad(x):
     return np.diagflat(s) - np.dot(s, s.T)
 
 
-x = np.array([0.00490169, 0.26762315, 0.72747516])
 
 
 
 
-# We don't need soft_max grad, as the error would be calculated before applying the softmax function

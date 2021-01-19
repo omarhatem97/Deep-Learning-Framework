@@ -31,9 +31,10 @@ class FC(Layer):
 
     # computes dE/dW, dE/dB for a given dY=dE/dY. Returns grad=dE/dX.
     def backward(self, dY, learning_rate):
+        m = len(dY)
         grad = np.dot(dY, self.weights.T)
-        dW = np.dot(self.input.T, dY)
-        dB = dY
+        dW = np.dot(self.input.T, dY)/m
+        dB = np.squeeze(np.sum(dY, axis=0, keepdims=True)).reshape(1,dY.shape[1])/m
 
         # update parameters
         self.weights -= learning_rate * dW
@@ -53,7 +54,7 @@ class ActivationLayer(Layer):
 
     # Returns grad=dE/dX for a given dY=dE/dY.
     # learning_rate is not used because there is no "learnable" parameters.
-    def backward(self, dY):    
+    def backward(self, dY, learning_rate):    
         return self.activation_grad(self.input) * dY
 
 class Flatten(Layer):
@@ -63,6 +64,6 @@ class Flatten(Layer):
         samples = X.shape[0]
         return X.reshape(samples, -1)
         
-    def backward(self, dY):
+    def backward(self, dY, learning_rate):
         return dY.reshape(self.input.shape)
 
