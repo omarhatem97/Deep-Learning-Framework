@@ -13,7 +13,7 @@ def tanh_grad(x):
 
 # ReLU activation function 
 def ReLU(x):
-    return max(0,x)
+    return x * (x > 0)
 
 # ReLU derivative
 def ReLU_grad(x):
@@ -38,7 +38,9 @@ def softmax_grad(x):
     return np.diagflat(s) - np.dot(s, s.T)
 
 
-x = np.array([[0.00490169, 0.26762315, 0.72747516],
-[-2.40265555e-05, -1.31180548e-03, -3.56585701e-03],
- [-1.31180548e-03, -7.16221526e-02, -1.94689196e-01],
- [-3.56585701e-03, -1.94689196e-01, -5.29220104e-01]])
+x = np.array([0.00490169, 0.26762315, 0.72747516])
+
+
+
+
+# We don't need soft_max grad, as the error would be calculated before applying the softmax function
