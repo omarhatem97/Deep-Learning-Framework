@@ -115,7 +115,7 @@ if __name__ == '__main__':
     label =           [0,1,2,1,0]
     predicted_value = [0,1,1,1,2]
 
-    out,tp,tn,fp,fn = confusion_matrix(label, predicted_value, 3)
+    out, tp, fp, tn, fn = confusion_matrix(label, predicted_value, 3)
     print_2dlist(out)
     print('tp: '+str(tp))
     print('tn: '+str(tn))
