@@ -1,0 +1,124 @@
+import numpy as np
+
+
+# Base class for Layers
+class Layer:
+    def __init__(self):
+        """
+        Initialization for the parameters of the class layer
+        """
+        self.input = None
+        self.output = None
+
+    #  X
+    def forward(self, input):
+        """
+        input -- the input to the layer for forward propagation.
+        Returns:
+        return -- computes the output of a layer for a given input
+        """
+        raise NotImplementedError
+
+    # computes dE/dX for a given dE/dY (and update parameters if any)
+    def backward(self, dY, learning_rate):
+        """
+        input -- dY = The gradient of the error with respect to previous layer,
+        input -- learning_rate = learning rate to update weights.
+        Returns:
+        return -- computes the gradient of the error with respect to this layer and update parameters if any.
+        """
+        raise NotImplementedError
+
+
+class FC(Layer):
+
+    def __init__(self, input_size, output_size):
+        """
+        Initialization for the parameters of the class fully connected layer
+        input_size = number of input neurons
+        output_size = number of output neurons
+        """
+        self.weights = 0.1 * np.random.rand(input_size, output_size) 
+        self.bias = 0.1 * np.random.rand(1, output_size) 
+
+    # returns output for a given input
+    def forward(self, input_data):
+        """
+        input -- the input to the layer for forward propagation.
+        Returns:
+        return -- computes the output of a layer for a given input
+        """
+        self.input = input_data
+        self.output = np.dot(self.input, self.weights) + self.bias
+        return self.output
+
+    # computes dE/dW, dE/dB for a given dY=dE/dY. Returns grad=dE/dX.
+    def backward(self, dY, learning_rate):
+        """
+        input -- dY = The gradient of the error with respect to previous layer,
+        input -- learning_rate = learning rate to update weights.
+        Returns:
+        return -- computes the gradient of the error with respect to this layer and update weights.
+        """
+        grad = np.dot(dY, self.weights.T)
+        dW = np.dot(self.input.T, dY)
+        dB = dY
+        # update parameters
+        self.weights -= learning_rate * dW
+        self.bias -= learning_rate * dB
+        return grad
+
+class ActivationLayer(Layer):
+    def __init__(self, activation, activation_grad):
+        """
+        input -- activation = pass the name of the activation function,
+        input -- learning_rate = pass the name of the activation function gradient.
+        """
+        self.activation = activation
+        self.activation_grad = activation_grad
+
+    # returns the activated input
+    def forward(self, input_data):
+        """
+        input -- the input to the layer for forward propagation.
+        Returns:
+        return -- computes the output of a layer for a given input
+        """
+        self.input = input_data
+        self.output = self.activation(self.input)
+        return self.output
+
+    # Returns grad=dE/dX for a given dY=dE/dY.
+    def backward(self, dY,learning_rate):
+        """
+        input -- dY = The gradient of the error with respect to previous layer,
+        input -- learning_rate = learning rate to update weights if any.
+        Returns:
+        return -- computes the gradient of the error with respect to this activation
+        """
+        return self.activation_grad(self.input) * dY
+
+class Flatten(Layer):
+   
+    def forward(self, X):
+        """
+        input -- x = the input from the previous layer,
+        Returns:
+        return -- changes the shape of the input to flatten the input into one dimension
+        extra:
+        save -- save the value of the input to use it in reshaping in back propagation.
+        """
+        self.input = X
+        samples = X.shape[0]
+        return X.reshape(samples, -1)
+        
+    def backward(self, dY, learning_rate):
+        """
+        input -- dY = The gradient of the error with respect to previous layer,
+        input -- learning_rate = learning rate to update weights if any.
+        while we aren't using the input parameters but to follow the notation of backward function in all layers
+        Returns:
+        return -- changes the shape of the previous layer to be as the input in the forward propagation which stored in input.shape
+        """
+        return dY.reshape(self.input.shape)
+
