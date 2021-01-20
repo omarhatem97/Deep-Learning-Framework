@@ -20,6 +20,12 @@ class Layer:
 
     # computes dE/dX for a given dE/dY (and update parameters if any)
     def backward(self, dY, learning_rate):
+        """
+         input -- dY = The gradient of the error with respect to previous layer,
+         input -- learning_rate = learning rate to update weights.
+         Returns:
+         return -- computes the gradient of the error with respect to this layer and update parameters if any.
+         """
         raise NotImplementedError
 
 
@@ -27,17 +33,32 @@ class FC(Layer):
     # input_size = number of input neurons
     # output_size = number of output neurons
     def __init__(self, input_size, output_size):
+        """
+        Initialization for the parameters of the class fully connected layer
+        input_size = number of input neurons
+        output_size = number of output neurons
+        """
         self.weights = 0.1 * np.random.rand(input_size, output_size) 
         self.bias = 0.1 * np.random.rand(1, output_size) 
 
-    # returns output for a given input
     def forward(self, input_data):
+        """
+        input -- the input to the layer for forward propagation.
+        Returns:
+        return -- computes the output of a layer for a given input
+        """
         self.input = input_data
         self.output = np.dot(self.input, self.weights) + self.bias
         return self.output
 
-    # computes dE/dW, dE/dB for a given dY=dE/dY. Returns grad=dE/dX.
     def backward(self, dY, learning_rate):
+        """
+        input -- dY = The gradient of the error with respect to previous layer,
+        input -- learning_rate = learning rate to update weights.
+        Returns:
+        return -- computes the gradient of the error with respect to this layer and update weights.
+        """
+
         m = len(dY)
         grad = np.dot(dY, self.weights.T)
         dW = np.dot(self.input.T, dY)/m
@@ -50,36 +71,61 @@ class FC(Layer):
 
 class ActivationLayer(Layer):
     def __init__(self, activation, activation_grad):
+        """
+        input -- activation = pass the name of the activation function,
+        input -- learning_rate = pass the name of the activation function gradient.
+        """
+
         self.activation = activation
         self.activation_grad = activation_grad
 
     # returns the activated input
     def forward(self, input_data):
+        """
+        input -- the input to the layer for forward propagation.
+        Returns:
+        return -- computes the output of a layer for a given input
+        """
+
         self.input = input_data
         self.output = self.activation(self.input)
         return self.output
 
     # Returns grad=dE/dX for a given dY=dE/dY.
     # learning_rate is not used because there is no "learnable" parameters.
-    def backward(self, dY, learning_rate):    
-        return self.activation_grad(self.input) * dY
-
-class Flatten(Layer):
-   
-    def forward(self, X):
-        self.input = X
-        samples = X.shape[0]
-        return X.reshape(samples, -1)
-        
     def backward(self, dY, learning_rate):
         """
         input -- dY = The gradient of the error with respect to previous layer,
-        input -- learning_rate = learning rate to update weights.
+        input -- learning_rate = learning rate to update weights if any.
         Returns:
-        return -- computes the gradient of the error with respect to this layer and update parameters if any.
+        return -- computes the gradient of the error with respect to this activation
+        """
+
+        return self.activation_grad(self.input) * dY
+
+class Flatten(Layer):
+
+    def forward(self, X):
+        """
+        input -- x = the input from the previous layer,
+        Returns:
+        return -- changes the shape of the input to flatten the input into one dimension
+        extra:
+        save -- save the value of the input to use it in reshaping in back propagation.
+        """
+        self.input = X
+        samples = X.shape[0]
+        return X.reshape(samples, -1)
+
+    def backward(self, dY, learning_rate):
+        """
+        input -- dY = The gradient of the error with respect to previous layer,
+        input -- learning_rate = learning rate to update weights if any.
+        while we aren't using the input parameters but to follow the notation of backward function in all layers
+        Returns:
+        return -- changes the shape of the previous layer to be as the input in the forward propagation which stored in input.shape
         """
         return dY.reshape(self.input.shape)
-
 
 class Conv_layer(Layer):
     def __init__(self,filters, kernel_shape=(3, 3), padding='valid', stride=1,):
@@ -197,4 +243,83 @@ class Conv_layer(Layer):
 
         return dA
 
-    
+class Pool(Layer):
+
+    def __init__(self, filter_size, stride,mode):
+        self.f = filter_size
+        self.s = stride
+        self.mode = mode
+        self.cache = None
+
+    def forward(self, X):
+        """
+            Apply average pooling.
+            Arguments:
+            - X: Output of activation function.
+
+            Returns:
+            - A_pool: X after average pooling layer.
+        """
+        m, n_C_prev, n_H_prev, n_W_prev = X.shape
+
+        n_C = n_C_prev
+        n_H = int((n_H_prev - self.f) / self.s) + 1
+        n_W = int((n_W_prev - self.f) / self.s) + 1
+
+        A_pool = np.zeros((m, n_C, n_H, n_W))
+
+        for i in range(m):
+
+            for c in range(n_C):
+
+                for h in range(n_H):
+                    h_start = h * self.s
+                    h_end = h_start + self.f
+
+                    for w in range(n_W):
+                        w_start = w * self.s
+                        w_end = w_start + self.f
+                        if self.mode == "average":
+                            A_pool[i, c, h, w] = np.mean(X[i, c, h_start:h_end, w_start:w_end])
+                        elif self.mode == "max":
+                            A_pool[i, c, h, w] = np.max(X[i, c, h_start:h_end, w_start:w_end])
+
+        self.cache = X
+
+        return A_pool
+
+
+    def backward(self, dout, learning_rate):
+        """
+            Distributes error through pooling layer.
+            Arguments:
+            - dout: Previous layer with the error.
+
+            Returns:
+            - dX: Conv layer updated with error.
+        """
+        X = self.cache
+        m, n_C, n_H, n_W = dout.shape
+        dX = np.zeros(X.shape)
+
+        for i in range(m):
+
+            for c in range(n_C):
+
+                for h in range(n_H):
+                    h_start = h * self.s
+                    h_end = h_start + self.f
+
+                    for w in range(n_W):
+                        w_start = w * self.s
+                        w_end = w_start + self.f
+                        if self.mode == "max":
+                            prev_a = X[i,c,h_start:h_end,w_start:w_end]
+                            max_pool = prev_a == np.max(prev_a)
+                            dX[i,c,h_start:h_end,w_start:w_end] += np.multiply(max_pool, dout[i, c, h, w])
+                        elif self.mode == "average":
+                            average = dout[i, c, h, w] / (self.f * self.f)
+                            filter_average = np.full((self.f, self.f), average)
+                            dX[i, c, h_start:h_end, w_start:w_end] += filter_average
+
+        return dX
