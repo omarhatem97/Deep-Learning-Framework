@@ -9,15 +9,29 @@ class Model:
 
     # add layer to network
     def add(self, layer):
+        '''
+        adds layers to the model
+        :param layer: a NN layer
+        '''
         self.layers.append(layer)
 
-    # set loss to use
     def use(self, loss, loss_prime):
+        '''
+        sets the used loss function
+        :param loss:
+        :param loss_prime:
+        :return:
+        '''
         self.loss = loss
         self.loss_prime = loss_prime
 
-    # predict X for given input
+
     def predict(self, input_data):
+        '''
+        predict X for given input
+        :param input_data: the input data
+        :return:
+        '''
         # sample dimension first
         samples = len(input_data)
         result = []
@@ -33,6 +47,13 @@ class Model:
         return result
 
     def train(self,X,Y, learning_rate):
+        '''
+        train  on sample data
+        :param X: data sample
+        :param Y: true values
+        :param learning_rate: learning rate
+
+        '''
         for layer in self.layers:
             X = layer.forward(X)
 
@@ -47,8 +68,16 @@ class Model:
 
 
 
-    # train the network
     def fit(self, x_train, y_train, epochs, learning_rate):
+        '''
+
+        train the model on the dataset
+        :param x_train: the training data
+        :param y_train: the true values
+        :param epochs: number of epochs
+        :param learning_rate: the learning rate of the parameters
+
+        '''
         # sample dimension first
         samples = len(x_train)
 
