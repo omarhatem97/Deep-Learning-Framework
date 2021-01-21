@@ -32,14 +32,14 @@ class Layer:
 class FC(Layer):
     # input_size = number of input neurons
     # output_size = number of output neurons
-    def __init__(self, input_size, output_size):
+    def __init__(self, output_size):
         """
         Initialization for the parameters of the class fully connected layer
         input_size = number of input neurons
         output_size = number of output neurons
         """
-        self.weights = 0.1 * np.random.rand(input_size, output_size) 
-        self.bias = 0.1 * np.random.rand(1, output_size) 
+        self.output_size = output_size
+        
 
     def forward(self, input_data):
         """
@@ -47,6 +47,10 @@ class FC(Layer):
         Returns:
         return -- computes the output of a layer for a given input
         """
+        input_size = len(input_data[0])
+    
+        self.weights = 0.1 * np.random.rand(input_size, self.output_size) 
+        self.bias = 0.1 * np.random.rand(1, self.output_size) 
         self.input = input_data
         self.output = np.dot(self.input, self.weights) + self.bias
         return self.output
@@ -210,7 +214,6 @@ class Conv_layer(Layer):
         (samples, prev_height, prev_width, prev_channels) = A.shape
 
         dA = np.zeros((samples, prev_height, prev_width, prev_channels))
-        self.grads = self.init_cache()
 
         self.dW = np.zeros_like(self.W)
         self.db = np.zeros_like(self.b)
