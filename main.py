@@ -37,10 +37,14 @@ if __name__ == '__main__':
     #construct layers
     my_model = Model('batch')
     activation_1 = ActivationLayer(ReLU, ReLU_grad)
+    activation_2 = ActivationLayer(ReLU, ReLU_grad)
 
-    layer1 = FC(784, 10)
+    layer1 = FC(784, 4)
+    layer2 = FC(4, 10)
     my_model.add(layer1)
+    my_model.add(layer2)
     my_model.add(activation_1)
+    my_model.add(activation_2)
 
     loss = Loss()
     my_model.use(loss= loss.MeanSquareLoss, loss_prime= loss.prime_MeanSquareLoss)
@@ -69,6 +73,15 @@ if __name__ == '__main__':
     out, tp, fp, tn, fn = confusion_matrix(y, y_hat_vector, 10)
     print('conf matrix: ')
     print_2dlist(out)
+
+    for i in range(10):
+        if(i in y_hat_vector):
+            print(str(i) + str(' found!'))
+        else:
+            print(str(i) + str(' not found!'))
+
+
+
 
     print('tp: ' + str(tp))
     print('tn: ' + str(tn))
