@@ -6,6 +6,12 @@ class Model:
         self.err = 0
         self.loss = None
         self.loss_prime = None
+        self.losses = []
+
+    def get_losses(self):
+        "return losses"
+        return self.losses
+
 
     # add layer to network
     def add(self, layer):
@@ -54,14 +60,17 @@ class Model:
         :param learning_rate: learning rate
 
         '''
+
         for layer in self.layers:
             X = layer.forward(X)
 
         # compute loss (for display purpose only)
-        self.err += self.loss(Y, X)
+
+        self.err += self.loss(X, Y)
+
 
         # backward propagation
-        error = self.loss_prime(Y, X)
+        error = self.loss_prime(X, Y)
         for layer in reversed(self.layers):
             error = layer.backward(error, learning_rate)
 
@@ -104,7 +113,7 @@ class Model:
                    batch_size = 100
                    num_of_batches = max(1, samples/batch_size)
                    j = 0
-                   for j in range(num_of_batches):
+                   for j in range(int(num_of_batches)):
                         begin_index = j*batch_size
                         end_index = min (samples, begin_index+batch_size)
                         current_batch_size = end_index-begin_index
@@ -126,5 +135,8 @@ class Model:
 
 
             # calculate average error on all samples
+
             self.err /= samples
+
             print('epoch %d/%d   error=%f' % (i+1, epochs, self.err))
+            self.losses.append(self.err)
