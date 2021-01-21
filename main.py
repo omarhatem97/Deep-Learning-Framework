@@ -1,7 +1,7 @@
-<<<<<<< HEAD
+
 from numpy.core.defchararray import mod
-=======
->>>>>>> 4adc789a9467231749b2ec9968f65f2b8700c094
+
+
 from activations import *
 from Evaluation import *
 from layer import *
@@ -20,7 +20,7 @@ def change_to_multi (y):
     return res
 
 
-<<<<<<< HEAD
+
 
 
 #load train.csv file and save input in x and output in y
