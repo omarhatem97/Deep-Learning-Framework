@@ -6,6 +6,12 @@ class Model:
         self.err = 0
         self.loss = None
         self.loss_prime = None
+        self.losses = []
+
+    def get_losses(self):
+        "return losses"
+        return self.losses
+
 
     # add layer to network
     def add(self, layer):
@@ -54,11 +60,14 @@ class Model:
         :param learning_rate: learning rate
 
         '''
+
         for layer in self.layers:
             X = layer.forward(X)
 
         # compute loss (for display purpose only)
+
         self.err += self.loss(X, Y)
+
 
         # backward propagation
         error = self.loss_prime(X, Y)
@@ -126,5 +135,8 @@ class Model:
 
 
             # calculate average error on all samples
+
             self.err /= samples
+
             print('epoch %d/%d   error=%f' % (i+1, epochs, self.err))
+            self.losses.append(self.err)

@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 from numpy.core.defchararray import mod
+=======
+>>>>>>> 4adc789a9467231749b2ec9968f65f2b8700c094
 from activations import *
 from Evaluation import *
 from layer import *
@@ -17,6 +20,7 @@ def change_to_multi (y):
     return res
 
 
+<<<<<<< HEAD
 
 
 #load train.csv file and save input in x and output in y
@@ -53,3 +57,36 @@ my_model.use(loss= l.MeanSquareLoss, loss_prime= l.prime_MeanSquareLoss)
 my_model.fit(x, y, 10, 0.1)
 # arr = [1,5,3]
 # print(str(change_to_multi(arr)))
+
+def change_to_vector(y):
+    res = []
+    for i in range(len(y)):
+        curr = y[i]
+        res.append(int(np.argmax(curr)))
+    return res
+
+
+
+out, tp, fp, tn, fn = confusion_matrix(y, y_hat_vector, 10)
+print('conf matrix: ')
+print_2dlist(out)
+
+print('tp: ' + str(tp))
+print('tn: ' + str(tn))
+print('fp: ' + str(fp))
+print('fn: ' + str(fn))
+print('accuracy: ' + str(accuracy(y,y_hat_vector,10)))
+print('precision: ' + str(precision(y, y_hat_vector,10)))
+print('recall: ' + str(recall(y, y_hat_vector, 10)))
+print('F1 score: ' + str(F1_score(y, y_hat_vector,10)))
+
+
+
+
+
+
+
+# arr = [1,5,3]
+# print(str(change_to_multi(arr)))
+
+

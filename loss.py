@@ -72,7 +72,7 @@ class Loss:
     #     max_loss = ( np.mean(cal_arr))
     #     return max_loss
     
-    def prime_MeanSquareLoss(self , Y_hat , Y):
+    def prime_MeanSquareLoss(self,Y_hat , Y):
         # (2 * (Y_hat - Y )) * 
         grads = (2 * (Y_hat - Y ))/ len(Y)
         return grads
