@@ -13,7 +13,6 @@ def calc_tn_forClass(class_no, classes):
             if(j == class_no):
                 continue
             tn += classes[i][j]
-
     return tn
 
 
@@ -27,7 +26,7 @@ def confusion_matrix (label, predicted_value, num_class):
 
     #initialize key,values  2d array
     for i in classes:
-        classes[i] = [0] * num_class
+        classes[i] = list(range(num_class))
 
     #Build confusion matrix
     for i in range(len(label)):
@@ -80,7 +79,7 @@ def accuracy (label, predicted_value, num_classes):
 
     acc = 0
     for i in range(num_classes):
-        acc = (tp[i]+tn[i]) / (tp[i]+fp[i]+tn[i]+fn[i])
+        acc += (tp[i]+tn[i]) / (tp[i]+fp[i]+tn[i]+fn[i])
     Accuracy = acc / num_classes
     return Accuracy
 
@@ -94,7 +93,7 @@ def precision (label, predicted_value, num_classes):
     print(fp)
     per = 0
     for i in range(num_classes):
-        per = (tp[i] ) / (tp[i] + fp[i] + epsilon)
+        per += (tp[i] ) / (tp[i] + fp[i] + epsilon)
     Precision = per / num_classes
     return Precision
 
@@ -107,7 +106,7 @@ def recall (label, predicted_value, num_classes):
 
     rec = 0
     for i in range(num_classes):
-        rec = (tp[i]) / (tp[i]+fn[i])
+        rec += (tp[i]) / (tp[i]+fn[i])
     Recall = rec / num_classes
     return Recall
 
