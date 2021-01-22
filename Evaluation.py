@@ -16,18 +16,28 @@ def calc_tn_forClass(class_no, classes):
     return tn
 
 
+def init_classes(num_classes):
+    classes =[]
+    for i in range(num_classes):
+        classes.append([])
+
+    for i in range(num_classes):
+        for j in range (num_classes):
+            classes[i].append(0)
+    return classes
+
 
 
 def confusion_matrix (label, predicted_value, num_class):
     """ takes label, predicted_value as vectors
         returns confusion matrix , tp, fp, tn, fn """
-    classes = list(range(num_class)) #0,1,2,3,4..
+    # classes = list(range(num_class)) #0,1,2,3,4..
+    classes = init_classes(num_class)
 
-
-    #initialize key,values  2d array
-    for i in classes:
-        classes[i] = list(range(num_class))
-
+    # #initialize key,values  2d array
+    # for i in classes:
+    #     classes[i] = list(range(num_class))
+    #
     #Build confusion matrix
     for i in range(len(label)):
         classes[label[i]][predicted_value[i]] += 1

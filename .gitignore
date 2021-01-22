@@ -1,6 +1,4 @@
-.vscode
-test.py
-__pycache__
-docs
+# Default ignored files
+/shelf/
+/workspace.xml
 .idea
-DataSet
