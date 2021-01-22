@@ -122,7 +122,7 @@ class Loss:
         totel_loss = 0
         softmax_layer = []
         for i in range (len(y)):
-            softmax_layer.append( np.exp(x[i][y[i]-1])/(np.exp(x[i])).sum())
+            softmax_layer.append(np.exp(x[i][y[i]-1])/(np.exp(x[i])).sum())
             totel_loss += (-1 *(np.log(softmax_layer[i])))
         return totel_loss
 
@@ -130,18 +130,19 @@ class Loss:
         '''
             A function to get grad of softmax layer .
             :param y_labeled_value : numpy array of Y labeled .
-            :param X_list          : numpy array of Y predicted .
-            :return : total loss  
+            :param X_list          : numpy array of X is output of final layer.
+            :return : numpy array of X is output of grad with dim X_list*No_of_output.
         '''
-        s = []
-        for i in range (len(y_labeled_value)):
-            s.append( np.exp(X_list[i][ y_labeled_value[i]-1])/(np.exp(X_list[i])).sum())
-        jacobian_m = np.diag(s)
-        for j in range(len(X_list)):
-            if j == y_labeled_value[j] :
-                jacobian_m[j] = 1-s[j]
-            else: 
-                jacobian_m[j] = s[j]
+        no_of_output = X_list[0]
+        exp_x = np.exp( X_list)
+        s = exp_x/np.sum(exp_x, axis=1, keepdims=True)
+        jacobian_m = np.zeros_like(s)
+        for i in range(len(X_list)):
+            for j in range(len(no_of_output)):
+                if j == (y_labeled_value -1).any() :
+                    jacobian_m[i][j] = (-1)* (1-s[i][j])
+                else: 
+                    jacobian_m[i][j] = s[i][j]
         return jacobian_m
 
 
@@ -161,4 +162,19 @@ class Loss:
 
         grads =  (probs - ones)/float(len(X))
         return grads
+
+
+'''
+testcase for softmax loss
+'''
+# a = Loss()
+# x = np.array([[4,2,3]])
+# y = np.array([[1]])
+# print (a.softmax_grad(x,y))
+
+
+# a = Loss()
+# x = np.array([[4,2,3] ,[4,2,3]])
+# y = np.array([1,2])
+# print (a.softmax_grad(x,y))
 
