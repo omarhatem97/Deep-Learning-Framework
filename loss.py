@@ -1,40 +1,40 @@
 import numpy as np
-import math
-'''
-1-Forward function 
-error of X with respect to Y_labels.
-Args:
-    X: numpy.ndarray of shape (n_batch, n_dim) which (WX).
-    Y: numpy.ndarray of shape (n_batch, n_dim) which (Y_labels).
-Returns:
-    loss: numpy.float. Mean square error of x.
-2- Prima function
-differencation of loss functionwith respect to X at (X, Y).
-Args:
-    X: numpy.ndarray of shape (n_batch, n_dim) which (WX).
-    Y: numpy.ndarray of shape (n_batch, n_dim) which (Y_labels).
-Returns:
-    gradX: numpy.ndarray of shape (n_batch, n_dim) which differencation of loss function
-'''
-
-'''
-the types of loss function : 
-MeanSquareLoss = 1/n  (( WX - Y )**2)
-1/n ( max (0 , - Y WX))
-log ( 1+ exp (- Y WX))
-- log ( | y/2 - 1/2 + WX|)
-1/n ( max (0 , 1 - Y WX))
-−(ylog(X)+(1−y)log(1−X))
-'''
  
 class Loss:
+    '''
+    class for losses have two function for every type of loss functions 
+    1-Forward function 
+    error of X with respect to Y_labels.
+    Args:
+        X: numpy.ndarray of shape (n_batch, n_dim) which (WX).
+        Y: numpy.ndarray of shape (n_batch, n_dim) which (Y_labels).
+    Returns:
+        loss: numpy.mean.float.
+    2- Prima function
+    differencation of loss function with respect to X at (X, Y).
+    Args:
+        X: numpy.ndarray of shape (n_batch, n_dim) which (WX).
+        Y: numpy.ndarray of shape (n_batch, n_dim) which (Y_labels).
+    Returns:
+        gradX: numpy.ndarray of shape (n_batch, n_dim) which differencation of loss function
+    '''
     def MeanSquareLoss(self, Y_hat , Y):
-        # (Y - Y_hat)**2
+        '''
+            A function to get totel loss by Mean Square Loss (Y - Y_hat)**2
+            :param Y_hat: numpy array of Y labeled .
+            :param Y    : numpy array of Y predicted  .
+            :return : total loss  
+        '''
         Msq_loss = np.mean((Y_hat - Y)**2)
         return Msq_loss
 
     def max_Loss(self , Y_hat , Y):
-        #1/n ( max (0 , - Y * Y_hat))
+        '''
+            A function to get totel loss by 1/n ( max (0 , - Y * Y_hat)).
+            :param Y_hat: numpy array of Y labeled .
+            :param Y    : numpy array of Y predicted .
+            :return : total loss  
+        '''
         cal_arr = np.array(-1 * Y_hat * Y)
         for i in range(len(cal_arr)):
             if cal_arr[i] < 0 :
@@ -42,9 +42,14 @@ class Loss:
         max_loss = (-1 * np.mean(cal_arr))
         return max_loss
 
-    def forward_log_sigmoid_loss(self , X , Y):
-        #- log ( | y/2 - 1/2 + WX|)
-        differences = ( Y / 2) - 0.5 + X
+    def forward_log_sigmoid_loss(self , Y_hat , Y):
+        '''
+            A function to get totel loss by -log ( | y/2 - 1/2 + WX|).
+            :param Y_hat: numpy array of Y labeled .
+            :param Y    : numpy array of Y predicted .
+            :return : total loss  
+        '''
+        differences = ( Y / 2) - 0.5 + Y_hat
         for i in range(len(differences)):
             if differences [ i ] < 0:
                 differences [ i ] *= -1
@@ -52,9 +57,14 @@ class Loss:
         log_loss = np.mean(loss_li)
         return log_loss
 
-    def forward_log_identity_loss(self , X , Y):
-        #log ( 1+ exp (- Y WX))
-        differences = 1 + np.exp(-1*Y*X)
+    def forward_log_identity_loss(self , Y_hat , Y):
+        '''
+            A function to get totel loss by log ( 1+ exp (- Y WX)).
+            :param Y_hat: numpy array of Y labeled .
+            :param Y    : numpy array of Y predicted .
+            :return : total loss  
+        '''
+        differences = 1 + np.exp(-1*Y*Y_hat)
         for i in range(len(differences)):
             if differences [ i ] < 0:
                 differences [ i ] *= -1
@@ -62,35 +72,78 @@ class Loss:
         log_loss = np.mean(loss_li)
         return log_loss
 
-    # def hinge_loss_single( self , Y_hat , Y ):
-    #     #1/n ( max (0 , - Y * Y_hat))
-    #     cal_arr = np.array(1 - (1 * Y_hat * Y))
-    #     for i in range(len(cal_arr)):
-    #         if cal_arr[i] < 0 :
-    #             cal_arr[i] = 0
-    #     print(cal_arr)
-    #     max_loss = ( np.mean(cal_arr))
-    #     return max_loss
-    
     def prime_MeanSquareLoss(self , Y_hat , Y):
-        # (2 * (Y_hat - Y )) * 
+        '''
+            A function to get differencation of loss "log ( 1+ exp (- Y WX))".
+            :param Y_hat: numpy array of Y labeled .
+            :param Y    : numpy array of Y predicted .
+            :return : prime of MeanSquareLoss.
+        '''
         grads = (2 * (Y_hat - Y ))/ len(Y)
         return grads
     
-    def local_grad_maxLoss(self , Y ):
-        # -Y * 
+    def prime_maxLoss(self ,Y_hat , Y ):
+        '''
+            A function to get differencation of max loss as "-Y * Data".
+            :param Y_hat: numpy array of Y labeled .
+            :param Y    : numpy array of Y predicted .
+            :return : prime of MeanSquareLoss.
+        '''
         grads = (-1 * Y ) / len(Y)
         return grads
 
-    def local_grad_logIdentityLoss(self , Y , Y_hat ):
-        # -Y / 1+e^(-Y Y_hat) * 
+    def prime_logIdentityLoss(self , Y , Y_hat ):
+        '''
+            A function to get differencation of logIdentity loss as "-Y / 1+e^(-Y Y_hat) * Data".
+            :param Y_hat: numpy array of Y labeled .
+            :param Y    : numpy array of Y predicted .
+            :return : prime of MeanSquareLoss.
+        '''
         grads = (-1 * Y * np.exp(-1*Y*Y_hat) ) / ((1 + np.exp(-1*Y*Y_hat))*len(Y))
         return grads
     
-    def local_grad_logSigmoidLoss(self , Y , Y_hat ):
-        # -Y / 1+e^(-Y Y_hat) * 
+    def prime_logSigmoidLoss(self , Y , Y_hat ):
+        '''
+            A function to get differencation of logSigmoid loss as "-Y / 1+e^(-Y Y_hat) * Data".
+            :param Y_hat: numpy array of Y labeled .
+            :param Y    : numpy array of Y predicted .
+            :return : prime of MeanSquareLoss.
+        '''
         grads = (-1 * Y ) / (1 + np.exp(-1*Y*Y_hat))
         return grads
+
+    def softmax( self, x , y ):
+        '''
+            A function to get totel loss for softmax layer .
+            :param x    : numpy array of Y labeled of data .
+            :param y    : numpy array of Y predicted  "2D" for Multiclasses.
+            :return : total loss  
+        '''
+        totel_loss = 0
+        softmax_layer = []
+        for i in range (len(y)):
+            softmax_layer.append( np.exp(x[i][y[i]-1])/(np.exp(x[i])).sum())
+            totel_loss += (-1 *(np.log(softmax_layer[i])))
+        return totel_loss
+
+    def softmax_grad( self , X_list , y_labeled_value ): 
+        '''
+            A function to get grad of softmax layer .
+            :param y_labeled_value : numpy array of Y labeled .
+            :param X_list          : numpy array of Y predicted .
+            :return : total loss  
+        '''
+        s = []
+        for i in range (len(y_labeled_value)):
+            s.append( np.exp(X_list[i][ y_labeled_value[i]-1])/(np.exp(X_list[i])).sum())
+        jacobian_m = np.diag(s)
+        for j in range(len(X_list)):
+            if j == y_labeled_value[j] :
+                jacobian_m[j] = 1-s[j]
+            else: 
+                jacobian_m[j] = s[j]
+        return jacobian_m
+
 
     def forward_CrossEntropy(self, X, y):
         exp_x = np.exp(X)
@@ -99,7 +152,7 @@ class Loss:
         crossentropy_loss = np.mean(log_probs)
         return crossentropy_loss 
 
-    def local_grad_CrossEntropy(self, X, Y):
+    def prime_CrossEntropy(self, X, Y):
         exp_x = np.exp(X)
         probs = exp_x/np.sum(exp_x, axis=1, keepdims=True)
         ones = np.zeros_like(probs)
@@ -109,8 +162,3 @@ class Loss:
         grads =  (probs - ones)/float(len(X))
         return grads
 
-# predictions = np.array([-1,0.25,0.25,-0.25])
-# targets = np.array([-1,0,0,1])
-
-# a = Loss()
-# print ( a.hinge_loss_single(predictions , targets))
