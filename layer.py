@@ -148,7 +148,7 @@ class Conv_layer(Layer):
         :param b:[numpy array]: Bias value for the filter. Shape (1, 1, 1)
         :return:
         '''
-        return np.sum(np.multiply(input, W)) + float(b)
+        return np.sum(np.multiply(input, W) + float(b))
     
 
     def forward(self,X):
@@ -218,8 +218,19 @@ class Conv_layer(Layer):
         self.dW = np.zeros_like(self.W)
         self.db = np.zeros_like(self.b)
 
-        A_pad = utils.pad_inputs(A, (pad_h, pad_w))
-        dA_pad = utils.pad_inputs(dA, (pad_h, pad_w))
+
+        if self.padding != 'same':
+            dY_pad_h = abs(prev_height-dY.shape[1])
+            dY_pad_w = abs(prev_width-dY.shape[2])
+            dY = utils.pad_inputs(dY,(dY_pad_h,dY_pad_w))
+            A_pad = utils.pad_inputs(A, (dY_pad_h, dY_pad_w))
+            dA_pad = utils.pad_inputs(dA, (dY_pad_h, dY_pad_w))
+            pad_h = dY_pad_h
+            pad_w = dY_pad_w
+        else:
+            A_pad = utils.pad_inputs(A, (pad_h, pad_w))
+            dA_pad = utils.pad_inputs(dA, (pad_h, pad_w))
+        
 
         for i in range(samples):
             a_pad = A_pad[i]

@@ -102,7 +102,7 @@ if __name__ == '__main__':
 
     l = Loss()
 
-    layer2 = Conv_layer(filters=10, kernel_shape=(3, 3), padding='same', stride=1)
+    layer2 = Conv_layer(filters=10, kernel_shape=(3, 3), padding='samee', stride=1)
     my_model.add(layer2)
 
     layer4 = Pool(stride=2, filter_size=6, mode='max')
