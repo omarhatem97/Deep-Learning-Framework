@@ -112,18 +112,18 @@ class Loss:
         grads = (-1 * Y ) / (1 + np.exp(-1*Y*Y_hat))
         return grads
 
-    def softmax( self, x , y ):
+    def softmax( self, y_hat , y  ):
         '''
             A function to get totel loss for softmax layer .
-            :param x    : numpy array of Y labeled of data .
-            :param y    : numpy array of Y predicted  "2D" for Multiclasses.
+            :param y_hat    : numpy array of Y labeled of data .
+            :param y        : numpy array of Y predicted  "2D" for Multiclasses.
             :return : total loss  
         '''
+        no_examples , no_nodes = y_hat.shape
         totel_loss = 0
-        softmax_layer = []
-        for i in range (len(y)):
-            softmax_layer.append(np.exp(x[i][y[i]-1])/(np.exp(x[i])).sum())
-            totel_loss += (-1 *(np.log(softmax_layer[i])))
+        for i in range(no_examples) :
+            print (y_hat[i][y[i]-1] )
+            totel_loss += (-1 *(np.log(y_hat[i][y[i]-1])))
         return totel_loss
 
     def softmax_grad( self , X_list , y_labeled_value ): 
@@ -168,9 +168,12 @@ class Loss:
 testcase for softmax loss
 '''
 # a = Loss()
-# x = np.array([[4,2,3]])
-# y = np.array([[1]])
-# print (a.softmax_grad(x,y))
+# x = np.array([[ 2,  4,  6],
+#             [ 8, 10, 12],
+#             [14, 16, 18]])
+
+# y = np.array([1,2,3])
+# print (a.softmax(x,y))
 
 
 # a = Loss()
