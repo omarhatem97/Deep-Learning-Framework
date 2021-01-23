@@ -43,12 +43,13 @@ class Model:
         result = []
 
         # run network over all samples
-        for i in range(samples):
+        #for i in range(samples):
             # forward propagation
-            X = input_data[i]
-            for layer in self.layers:
-                X = layer.forward(X)
-            result.append(X)
+            #X = input_data[i]
+        X = input_data
+        for layer in self.layers:
+            X = layer.forward(X)
+        result.append(X)
 
         return result
 

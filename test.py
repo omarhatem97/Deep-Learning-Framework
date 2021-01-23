@@ -3,15 +3,15 @@ from activations import *
 import model
 import Load
 from loss import *
-train_data = Load.load.loadData('DataSet/train.csv','label', 0)
+train_data = Load.load.loadData('DataSet/100_sample.csv','label', 0)
 
 print(train_data[0].shape)
 
 X = train_data[0]
 Y = train_data[1]
 
-X = X.reshape(42000,28,28,1)
-Y = Y.reshape(42000,1)
+X = X.reshape(99,28,28,1)
+Y = Y.reshape(99,1)
 
 print(X.shape, Y.shape)
 
@@ -63,5 +63,5 @@ our_model.fit(X,Y,10,0.1)
 
 print(X.shape)
 
-our_model.predict(X)
+print(our_model.predict(X))
 
