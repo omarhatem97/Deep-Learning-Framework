@@ -72,7 +72,9 @@ def softmax(x):
     return -- activation of x using softmax
     """
     e_x = np.exp(x - np.max(x))
-    return e_x / np.sum(e_x,axis=0, keepdims=True)
+    return e_x / np.sum(e_x,axis=1, keepdims=True)
+       
+
 
 def softmax_grad(x):
     """
@@ -81,7 +83,16 @@ def softmax_grad(x):
     Returns:
     return -- gradient of activation softmax(x) for back propagation
     """
-    s = x.reshape(-1,1)
-    return np.diagflat(s) - np.dot(s, s.T)
+    #s = x.reshape(-1,1)
+    #return np.diagflat(s) - np.dot(s, s.T)
+    Z = softmax(x)
+    return x * ( Z* (1 - Z))
 
 
+
+x = np.random.rand(100,10) * 5
+
+z = softmax(x)
+z = softmax_grad(z)
+print(z.shape)
+print(np.sum(z[0]))
