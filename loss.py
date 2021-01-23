@@ -126,26 +126,26 @@ class Loss:
         no_examples, no_nodes = y_hat.shape
         totel_loss = []
         for i in range(no_examples):
-            totel_loss.append(-1 * 0.0000000001 *(np.log(y_hat[i][y[i]])))
+            totel_loss.append(-1 *(np.log( 0.0000000001 + y_hat[i][y[i]])))
         return np.mean(totel_loss)
 
-    # def softmax_grad(self, y_hat, X_list):
-    #     '''
-    #         A function to get grad of softmax layer .
-    #         :param y_labeled_value : numpy array of Y labeled . 'no_of_sample * 1'
-    #         :param X_list          : numpy array of X is output of final layer. 'no_of_sample * 1'
-    #         :return : numpy array of X is output of grad with dim X_list*No_of_output.
-    #     '''
-    #     no_examples, no_of_output = y_hat.shape
-    #     jacobian_m = np.zeros_like(y_hat)
+    def softmax_grad(self, y_hat, Y_label):
+        '''
+            A function to get grad of softmax layer .
+            :param  y_hat  : numpy array of Y labeled . 'no_of_sample * no of nodes'
+            :param Y_label : numpy array of X is output of final layer. 'no_of_sample * 1'
+            :return : numpy array of X is output of grad with dim 'no_of_sample * no of nodes'
+        '''
+        no_examples, no_of_output = y_hat.shape
+        jacobian_m = np.zeros_like(y_hat)
 
-    #     for i in range(no_examples):
-    #         for j in range(no_of_output):
-    #             if j == y_hat[i].any():
-    #                 jacobian_m[i][j] = (-1)*(1-y_hat[i][j])
-    #             else:
-    #                 jacobian_m[i][j] = y_hat[i][j]
-    #     return jacobian_m
+        for i in range(no_examples):
+            for j in range(no_of_output):
+                if i == Y_label[i].any():
+                    jacobian_m[i][j] = (-1)*(1-y_hat[i][j])
+                else:
+                    jacobian_m[i][j] = y_hat[i][j]
+        return jacobian_m
 
     def forward_CrossEntropy(self, Y_hat , Y_label ):
         # exp_x = np.exp(X)
@@ -169,12 +169,13 @@ class Loss:
 testcase for softmax loss
 '''
 # a = Loss()
-# x = np.array([[2,  4,  6],
-#               [8, 10, 12],
-#               [14, 16, 18]])
+# x = np.array([[0,0,0.2119],
+# [0,0,0.2119],
+# [0,0,0.5176]]
+# )
 
-# y = np.array([1, 2, 0])
-# print(a.forward_CrossEntropy(x, y))
+# y = np.array([0,1,2])
+# print(a.softmax_loss(x, y))
 
 
 # a = Loss()
