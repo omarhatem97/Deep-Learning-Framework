@@ -39,7 +39,7 @@ if __name__ == '__main__':
     indexY = 0
     x, y = load.loadData('DataSet/train.csv', y, indexY)
     test_x, _ = load.loadData('DataSet/test.csv','no', -1)
-    x, y, _, _ = load.split_dataset(x, y, 0.1)
+    x, y, _, _ = load.split_dataset(x, y, 0.01)
 
 
     x = load.normalization(x)
@@ -51,10 +51,10 @@ if __name__ == '__main__':
     # x = train_data[0]
     # Y = train_data[1]
 
-    x = x.reshape(4200, 28*28)
+    x = x.reshape(420, 28*28)
     # test_x = test_x.reshape(28000, 28*28)
     y_old = y
-    y = y.reshape(4200, 1)
+    y = y.reshape(420, 1)
 
     # y = np.eye(10)[y]
     # y = int(y.reshape(420,10))
@@ -122,9 +122,10 @@ if __name__ == '__main__':
     our_model.use(our_loss.softmax_loss, our_loss.prime_CrossEntropy)
 
     # plt.imshow(x[6].reshape(28, 28))
+    print(y)
 
     print('fitting.....')
-    our_model.fit(x, y, 20, 0.5)
+    our_model.fit(x, y, 100, 0.5)
 
     # w, b = our_model.get_weights()
     #
@@ -140,10 +141,10 @@ if __name__ == '__main__':
     # save_model(layers, 'model.pickle')
     #
     loss = our_model.get_losses()
-    visualize(loss, 20, 0.1)
+    visualize(loss, 100, 0.01)
 
 
-    #save model
+    # save model
     # doda= our_model.save()
     # load model
     # layers = load_model('model.pickle')
@@ -166,3 +167,8 @@ if __name__ == '__main__':
     print(y_old)
     print(out)
     print(len(out))
+
+    print('accuracy: ' + str(accuracy(y_old,out,10)))
+    print('precision: ' + str(precision(y_old, out,10)))
+    print('recall: ' + str(recall(y_old, out, 10)))
+    print('F1 score: ' + str(F1_score(y_old, out,10)))

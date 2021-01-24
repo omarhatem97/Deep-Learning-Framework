@@ -32,6 +32,7 @@ def confusion_matrix (label, predicted_value, num_class):
     """ takes label, predicted_value as vectors
         returns confusion matrix , tp, fp, tn, fn """
     # classes = list(range(num_class)) #0,1,2,3,4..
+
     classes = init_classes(num_class)
 
     # #initialize key,values  2d array

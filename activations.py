@@ -73,6 +73,9 @@ def softmax(x):
     """
     e_x = np.exp(x - np.max(x,axis=1, keepdims=True))
     e_x = e_x / np.sum(e_x, axis=1, keepdims=True)
+    if(np.sum(e_x[0]) != 1.0):
+        ylahwy = np.sum(e_x[0])
+        print()
 
     return e_x
        

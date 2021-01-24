@@ -124,10 +124,10 @@ class Loss:
             :return : total loss  
         '''
         no_examples, no_nodes = y_hat.shape
-        totel_loss = []
+        total_loss = []
         for i in range(no_examples):
-            totel_loss.append(-1 *(np.log( 0.0000000001 + y_hat[i][y[i]])))
-        return np.sum(totel_loss)
+            total_loss.append(-1 *(np.log( 0.0000000001 + y_hat[i][y[i,0]])))
+        return np.sum(total_loss)
 
     def softmax_grad(self, y_hat, Y_label):
         '''
@@ -141,7 +141,7 @@ class Loss:
 
         for i in range(no_examples):
             for j in range(no_of_output):
-                if i == Y_label[i].any():
+                if j == Y_label[i]:
                     jacobian_m[i][j] = (-1)*(1-y_hat[i][j])
                 else:
                     jacobian_m[i][j] = y_hat[i][j]

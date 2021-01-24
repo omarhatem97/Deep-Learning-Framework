@@ -113,6 +113,7 @@ class Model:
         :param learning_rate: the learning rate of the parameters
 
         '''
+        print(y_train)
         # sample dimension first
         samples = len(x_train)
 
