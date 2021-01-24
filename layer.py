@@ -1,5 +1,7 @@
 import numpy as np
 import utils
+import copy
+
 
 # Base class for Layers
 class Layer:
@@ -7,6 +9,7 @@ class Layer:
         """
         Initialization for the parameters of the class layer
         """
+
         self.input = None
         self.output = None
 
@@ -38,8 +41,28 @@ class FC(Layer):
         input_size = number of input neurons
         output_size = number of output neurons
         """
+        self.firstTime = 1
         self.output_size = output_size
         
+
+    def get_weights(self):
+        """return weights, biases """
+        return self.weights, self.bias
+
+    def test_forward(self, x, w, b):
+        input_size = len(x[0])
+
+        # to be seeen!
+
+        self.weights = copy.deepcopy(w)
+        self.bias = copy.deepcopy(b)
+        self.input = copy.deepcopy(x)
+        self.output = np.dot(self.input, self.weights) + self.bias
+        return self.output
+
+
+
+
 
     def forward(self, input_data):
         """
@@ -48,12 +71,20 @@ class FC(Layer):
         return -- computes the output of a layer for a given input
         """
         input_size = len(input_data[0])
-    
-        self.weights = 0.1 * np.random.rand(input_size, self.output_size) 
-        self.bias = 0.1 * np.random.rand(1, self.output_size) 
+
+        #to be seeen!
+        if(self.firstTime):
+            self.weights = 0.1 * np.random.randn(input_size, self.output_size)
+            self.bias = 0.1 * np.random.randn(1, self.output_size)
+            self.firstTime = 0
+
         self.input = input_data
-        self.output = np.dot(self.input, self.weights) + self.bias
+
+        self.output = np.dot(self.input, self.weights)
+        self.output += self.bias
+
         return self.output
+
 
     def backward(self, dY, learning_rate):
         """
@@ -71,6 +102,7 @@ class FC(Layer):
         # update parameters
         self.weights -= learning_rate * dW
         self.bias -= learning_rate * dB
+
         return grad
 
 class ActivationLayer(Layer):
@@ -104,8 +136,8 @@ class ActivationLayer(Layer):
         Returns:
         return -- computes the gradient of the error with respect to this activation
         """
-
-        return self.activation_grad(self.input) * dY
+        res = self.activation_grad(self.input) * dY
+        return res
 
 class Flatten(Layer):
 
@@ -137,7 +169,7 @@ class Conv_layer(Layer):
         self.kernel_shape = kernel_shape
         self.padding = padding
         self.filters = filters
-        
+        self.initialized = False
 
 
     def conv_single_step(self, input, W, b):
@@ -149,26 +181,26 @@ class Conv_layer(Layer):
         :return:
         '''
         return np.sum(np.multiply(input, W) + float(b))
-    
 
-    def forward(self,X):
-          
+    def forward(self, X):
+
         '''
         forward propagation for a 3D convolution layer
         :param X: Input
         :return: Z
         '''
-        
+
         (samples, prev_height, prev_width, prev_channels) = X.shape
         filter_shape_h, filter_shape_w = self.kernel_shape
 
-       
         shape = (filter_shape_h, filter_shape_w, prev_channels, self.filters)
-        self.W , self.b = utils.glorot_uniform(shape=shape)
+        if self.initialized == False:
+            self.W, self.b = utils.glorot_uniform(shape=shape)
+            self.initialized = True
 
         if self.padding == 'same':
-            pad_h = int(((prev_height - 1)*self.stride + filter_shape_h - prev_height) / 2)
-            pad_w = int(((prev_width - 1)*self.stride + filter_shape_w - prev_width) / 2)
+            pad_h = int(((prev_height - 1) * self.stride + filter_shape_h - prev_height) / 2)
+            pad_w = int(((prev_width - 1) * self.stride + filter_shape_w - prev_width) / 2)
             n_H = prev_height
             n_W = prev_width
         else:
@@ -177,9 +209,8 @@ class Conv_layer(Layer):
             n_H = int((prev_height - filter_shape_h) / self.stride) + 1
             n_W = int((prev_width - filter_shape_w) / self.stride) + 1
 
-
         Z = np.zeros(shape=(samples, n_H, n_W, self.filters))
-        self.pad_h , self.pad_w = pad_h, pad_w
+        self.pad_h, self.pad_w = pad_h, pad_w
         X_pad = utils.pad_inputs(X, (pad_h, pad_w))
 
         for i in range(samples):
@@ -192,7 +223,6 @@ class Conv_layer(Layer):
                     horiz_end = horiz_start + filter_shape_w
 
                     for c in range(self.filters):
-
                         x_slice = x[vert_start: vert_end, horiz_start: horiz_end, :]
 
                         Z[i, h, w, c] = self.conv_single_step(x_slice, self.W[:, :, :, c],

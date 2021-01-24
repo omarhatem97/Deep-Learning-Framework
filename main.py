@@ -41,8 +41,8 @@ if __name__ == '__main__':
     # activation_1 = ActivationLayer(ReLU, ReLU_grad)
     # activation_2 = ActivationLayer(ReLU, ReLU_grad)
     #
-    # layer1 = FC(784, 4)
-    # layer2 = FC(4, 10)
+    # layer1 = FC(4)
+    # layer2 = FC(10)
     # my_model.add(layer1)
     # my_model.add(layer2)
     # my_model.add(activation_1)
@@ -51,7 +51,22 @@ if __name__ == '__main__':
     # loss = Loss()
     # my_model.use(loss= loss.MeanSquareLoss, loss_prime= loss.prime_MeanSquareLoss)
     #
-    # my_model.fit(x, y_matrix, 100, 0.1)
+    # my_model.fit(x, y_matrix, 10, 0.01)
+    # w = load_model('weights.pickle')
+    # b = load_model('bias.pickle')
+    #
+    # # save_model(w, 'weights.pickle')
+    # # save_model(b, 'bias.pickle')
+    #
+    # print ('weights: ')
+    # print(w)
+    # print('biase:')
+    # print(b)
+    #
+    # result = my_model.test_predict(x, w, b)
+    #
+    # print('results: ')
+    # print(result[0].shape)
     #
     # #get losses
     # losses = my_model.get_losses()
@@ -102,25 +117,40 @@ if __name__ == '__main__':
 
     l = Loss()
 
-    layer2 = Conv_layer(filters=10, kernel_shape=(3, 3), padding='samee', stride=1)
-    my_model.add(layer2)
+    # layer2 = Conv_layer(filters=10, kernel_shape=(3, 3), padding='same', stride=1)
+    # my_model.add(layer2)
+    #
+    # layer4 = Pool(stride=2, filter_size=6, mode='max')
+    # my_model.add(layer4)
+    # layer3 = Flatten()
+    #
+    # my_model.add(layer3)
 
-    layer4 = Pool(stride=2, filter_size=6, mode='max')
-    my_model.add(layer4)
-    layer3 = Flatten()
-
-    my_model.add(layer3)
-
-    layer1 = FC(5)
-
+    layer1 = FC(2)
     activation1 = ActivationLayer(sigmoid, sigmoid_grad)
     my_model.add(layer1)
     my_model.add(activation1)
+
+    layer2 = FC(5)
+    my_model.add(layer2)
+    my_model.add(activation1)
+    #print(isinstance(layer1, FC))
+
+
     my_model.use(loss=l.MeanSquareLoss, loss_prime=l.prime_MeanSquareLoss)
 
     my_model.fit(x, y, 10, 0.1)
-
-
+    # w,b = my_model.get_weights()
+    # # print('shape of w:', )
+    # print ('weights : ')
+    # print(w)
+    # print('biase :')
+    # print(b)
+    #
+    # result = my_model.test_predict(x, w, b)
+    #
+    # print('result: ')
+    # print(result)
 
 
     # arr = [1,5,3]

@@ -17,7 +17,10 @@ class load:
     #datasets.describe() #Return all the statics for every row x col
   
     all_pixels = np.array(datasets.iloc[:,fin_index:])
-    Labels = np.array(datasets[y])
+    Labels = None
+    if(y == 'label'):
+      Labels = np.array(datasets[y])
+
 
     return all_pixels, Labels
 

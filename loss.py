@@ -127,7 +127,7 @@ class Loss:
         totel_loss = []
         for i in range(no_examples):
             totel_loss.append(-1 *(np.log( 0.0000000001 + y_hat[i][y[i]])))
-        return np.mean(totel_loss)
+        return np.sum(totel_loss)
 
     def softmax_grad(self, y_hat, Y_label):
         '''
